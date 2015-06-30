@@ -1,12 +1,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%   Pueden probar las funciones principales con estos predicados:			 %%
+%%   Pueden probar las funciones principales con estos predicados	     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%   MAIN PROGRAM                                                			 %%
+%%   MAIN PROGRAM                                       		     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cargarSopa	:-	write('Escribe el nombre de la Sopa de Letras (extemción pl): '), nl,
 				read(Archivo),
 				consult(Archivo),
 				comienzo .
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Cargar Sopa                                                              %%        
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sopa(Sopa) :- Sopa = [["h","f","g","h"],["o","b","c","d"],["l","j","k","l"],["a","n","o","p"]].
+sopaChar(SopaChar):- SopaChar = [[h,f,g,h],[o,b,c,d],[l,j,k,l],[a,n,o,p]].
+cargarAlfabeto :-consult('alfabeto.pl') .
 
 
 comienzo 	:- 	write('Sopa cargada:'), nl,
