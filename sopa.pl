@@ -1,24 +1,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%   Pueden probar las funciones principales con estos predicados:			 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   MAIN PROGRAM                                                			 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cargarSopa	:-	write('Escribe el nombre de la Sopa de Letras (extemción pl): '), nl,
+				read(Archivo),
+				consult(Archivo),
+				comienzo .
 
-%horizontalesOeste( [i,h],[[a,b,c], [d,e,f],[g,h,i]], A).
-%horizontalesEste( [e,f],[[a,b,c], [d,e,f],[g,h,i]], A).
-%verticalesNorte( [g,d],[[a,b,c], [d,e,f],[g,h,i]], A).
-%verticalesSur( [c,f],[[a,b,c], [d,e,f],[g,h,i]], A).
 
-empezarBien :-
-write('Ingrese la sopa de letras en forma de lista de listas.Debe ser cuadrada'),
-SOPA1 = [[h,o,l,a,r,q,d],[a,f,g,h,q,x,y],[m,m,a,f,f,f,q],[f,q,r,g,u,k,l],[r,f,q,f,v,x,g],[r,f,j,a,x,z,q],[b,c,q,c,x,h,e]],
-tab(20),
-print(SOPA1),
-matrizCuadrada(SOPA1),
-tab(20),
-write('ingrese la palabra a buscar'),
-read(Palabra).
-%faltan:
-%string_to_list
-%buscarpalabra
+comienzo 	:- 	write('Sopa cargada:'), nl,
+				tab(20),
+				sopaChar(SopaChar),
+				print(SopaChar), nl,
+				sopa(Sopa),
+				matrizCuadrada(Sopa),
+				tab(20), nl,
+				write('Ingrese la palabra a buscar: '), nl,
+				read(Palabra) ,
+				horizontalesEste(Palabra, Sopa, M), nl,
+				print(M),
+				horizontalesOeste(Palabra, Sopa, M), nl,
+				print(M),
+				verticalesSur(Palabra, Sopa, M), nl,
+				print(M),
+				verticalesNorte(Palabra, Sopa, M), nl,
+				print(M).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Funciones principales													 %%
