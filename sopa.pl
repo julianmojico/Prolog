@@ -29,15 +29,11 @@ comienzo 	:- 	write('Sopa cargada:'), nl,
 				tab(20), nl, write_ln(''),
 				imprimirMatriz(Sopa),
 				write('Ingrese la palabra a buscar: '), nl,
-				read(Palabra) ,
-				horizontalesEste(Palabra, Sopa, M), nl,
-				print(M),
-				horizontalesOeste(Palabra, Sopa, M), nl,
-				print(M),
-				verticalesSur(Palabra, Sopa, M), nl,
-				print(M),
-				verticalesNorte(Palabra, Sopa, M), nl,
-				print(M).
+				read(Palabra),
+				string_to_list_of_characters(Palabra, Palabraenlista),
+				encontrarEnSopa(Palabraenlista,Resultados),
+				print(Resultados).
+	
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +160,15 @@ encontrar(X,[_|AS],C,IndiceY,Dir):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%   Funciones auxiliares													 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string_to_list_of_characters(String, Characters) :-
+    name(String, Xs),
+    maplist( number_to_character,
+       Xs, Characters ).
+
+number_to_character(Number, Character) :-
+    name(Character, [Number]).
+
 
 sumar(A, B, C):- C is A + B.
 restar(A, B, C):- C is A - B.
