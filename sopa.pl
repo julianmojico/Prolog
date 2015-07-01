@@ -49,35 +49,57 @@ length(B,LENGTH2),
 LENGTH1==LENGTH2,
 matrizCuadrada([B|T]).
 
+encontrarEnSopa(Palabra,Resultados):- 
+    sopaChar(Sopa),
+    horizontalesEste(Palabra,Sopa, RHE),
+    horizontalesOeste(Palabra,Sopa, RHO),
+    verticalesSur(Palabra,Sopa, RVS),
+    verticalesNorte(Palabra,Sopa, RVN),
+    append([],RHE,R1),
+    append(R1,RHO,R2),
+    append(R2,RVS,R3),
+    append(R3,RVN,Resultados).
+
 %horizontalesEste(+lpalabra,+Sopa,subconjuto de sopa que contiene "palabra")
 % Direccion Horizontal
 % Sentido Oeste-->Este
-horizontalesEste(_,[],_).
-horizontalesEste(X,A,C) :-  encontrar(X,A,C), subconjunto(C,A).
+horizontalesEste(Palabra,Sopa,Resultado) :-  
+    encontrar(Palabra,Sopa,Resultado,_,este).
 
 %horizontalesOeste(+lpalabra,+Sopa,subconjuto de sopa que contiene "palabra")
 % Direccion Horizontal
 % Sentido Este-->Oeste
-horizontalesOeste(_,[],_).
-horizontalesOeste(X,A,C) :- invertir(X,Z), encontrar(Z,A,C), subconjunto(C,A).
+horizontalesOeste(Palabra,Sopa,Resultado) :- 
+    invertir(Palabra,PalabraMod), 
+    encontrar(PalabraMod,Sopa,Resultado,_,oeste).
 
 %verticalesSur(+lpalabra,+Sopa,subconjuto de sopa que contiene "palabra")
 % Direccion Vertical
 % Sentido Norte-->Sur
-verticalesSur(_,[],_).
-verticalesSur(X,A,C) :- getVerticales(A,V), encontrar(X,V,C), subconjunto(C,V).
+verticalesSur(Palabra,Sopa,Resultado) :- 
+    getVerticales(Sopa,SopaInversa),
+    encontrar(Palabra,SopaInversa,Resultado,_,sur).
 
 %verticalesNorte(+lpalabra,+Sopa,subconjuto de sopa que contiene "palabra")
 % Direccion Vertical
 % Sentido Sur-->Norte
-verticalesNorte(_,[],_).
-verticalesNorte(X,A,C) :- invertir(X,Z), getVerticales(A,V) , encontrar(Z,V,C), subconjunto(C,V).
+verticalesNorte(Palabra,Sopa,Resultado) :- 
+    invertir(Palabra,PalabraInversa),
+    getVerticales(Sopa,SopaInversa),
+    encontrar(PalabraInversa,SopaInversa,Resultado,_,norte).
 
-%Busca en una fila en sentido --> si encuentra la palabra dada
-%encontrar(+lpalabra,+Sopa,-listas que contienen la palabra)
-encontrar(_,[],_).
-encontrar(X,[A|AS],C):- sublista(X, A), contienelista(A,C), encontrar(X,AS,C).
-encontrar(X,[_|AS],C):- encontrar(X,AS,C).
+
+%encontrar(Palabra,Sopa,Resultado,IndiceY,Direccion)
+encontrar(_,[],[],0, _).
+encontrar(X,[A|AS],C,IndiceY,Dir):- 
+    sublistaIndex(X, A,IndiceX),
+    append([[IndiceX,IndiceY,Dir]],D,C),
+    encontrar(X,AS,D,Index,Dir), 
+    IndiceY is Index+1.
+encontrar(X,[_|AS],C,IndiceY,Dir):- 
+    append([],D,C),
+    encontrar(X,AS,D,Index,Dir),
+    IndiceY is Index+1.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,6 +140,11 @@ sublista([],_):-!.
 sublista(L,[X|M]):-prefijo(L,[X|M]).
 sublista(L,[_|M]):-sublista(L,M).
 
+%16-Determina si la primer lista es sublista de la segunda*/
+sublistaIndex([],_,_):-!.
+sublistaIndex(L,[X|M],1):-prefijo(L,[X|M]).
+sublistaIndex(L,[_|M],IndiceX):-sublistaIndex(L,M,Index),IndiceX is Index+1.
+
 % getVertical(+Sopa, -Columna, +Filas)
 %   Obtiene una columna de la sopa de letras.
 getVertical([], [], []).
@@ -126,4 +153,6 @@ getVertical([[S|Opitas]|Resto], [S|Columna], [Opitas|Filas]) :-  getVertical(Res
 % getVerticales(+Sopa, -Verticales)
 %   Obtiene la lista con todas las columnas de la sopa de letras.
 getVerticales([[]|_], []).
-getVerticales(Sopa, [Vertical|Resto]) :- getVertical(Sopa, Vertical, Opa),  getVerticales(Opa, Resto).
+getVerticales(Sopa, [Vertical|Resto]) :- 
+    getVertical(Sopa, Vertical, Opa), 
+    getVerticales(Opa, Resto).
