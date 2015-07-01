@@ -42,7 +42,7 @@ comienzo 	:- 	write('Sopa cargada:'), nl,
 
 %matrizCuadrada(+Lista)
 matrizCuadrada([]).
-matrizCuadrada([A|[]]).
+matrizCuadrada([_|[]]).
 matrizCuadrada([A,B|T]):-
 length(A,LENGTH1),
 length(B,LENGTH2),
