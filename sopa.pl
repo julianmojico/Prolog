@@ -1,5 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%   Pueden probar las funciones principales con estos predicados	     %%
+%% 	encontrarEnSopa([r,j,z],A).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%   MAIN PROGRAM                                       		     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -12,7 +13,10 @@ cargarSopa	:-	write('Escribe el nombre de la Sopa de Letras (extemción pl): '),
 %%  Cargar Sopa                                                              %%        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sopa(Sopa) :- Sopa = [["h","f","g","h"],["o","b","c","d"],["l","j","k","l"],["a","n","o","p"]].
-sopaChar(SopaChar):- SopaChar = [[h,f,g,h],[o,b,c,d],[l,j,k,l],[a,n,o,p]].
+sopaChar(SopaChar):- SopaChar = [[h,f,g,h],
+				 [o,b,c,d],
+				 [l,j,k,l],
+				 [a,n,o,p]].
 cargarAlfabeto :-consult('alfabeto.pl') .
 
 
@@ -71,11 +75,13 @@ encontrarEnSopa(Palabra,Resultados):-
     horizontalesOeste(Palabra,Sopa, RHO),
     procesarSalidaOeste(5,LargoPalabra,RHO,RHOMOD), %5 = NRO matriz cuadrada
     verticalesSur(Palabra,Sopa, RVS),
+    procesarSalidaSur(5,RVS,RVSMOD),
     verticalesNorte(Palabra,Sopa, RVN),
+    procesarSalidaNorte(5,LargoPalabra,RVN,RVNMOD),
     append([],RHEMOD,R1),
     append(R1,RHOMOD,R2),
-    append(R2,RVS,R3),
-    append(R3,RVN,Resultados).
+    append(R2,RVSMOD,R3),
+    append(R3,RVNMOD,Resultados).
 
 %horizontalesEste(+lpalabra,+Sopa,subconjuto de sopa que contiene "palabra")
 % Direccion Horizontal
@@ -105,6 +111,24 @@ verticalesNorte(Palabra,Sopa,Resultado) :-
     getVerticales(Sopa,SopaInversa),
     encontrar(PalabraInversa,SopaInversa,Resultado,_,norte).
 
+procesarSalidaNorte(_,_,[],[]).
+procesarSalidaNorte(LargoMatriz,LargoPalabra,C1,C2):- 
+    append([[X,Y,Z]],D1,C1),   
+    restar(LargoMatriz,Y,NuevoX),
+    restar(LargoPalabra,1,LargoP),
+    sumar(X,LargoP,NuevoY),
+    append([[NuevoX,NuevoY,Z]],D2,C2),    
+    procesarSalidaNorte(LargoMatriz,LargoPalabra,D1,D2).
+
+
+%Invierte X por Y
+%El nuevo X es Largo matriz - Xanterior
+procesarSalidaSur(_,[],[]).
+procesarSalidaSur(LargoMatriz,C1,C2):- 
+    append([[X,Y,Z]],D1,C1),
+    restar(LargoMatriz,Y,Resta1),  
+    append([[Resta1,X,Z]],D2,C2),    
+    procesarSalidaSur(LargoMatriz,D1,D2).
 
 procesarSalidaEste(_,[],[]).
 procesarSalidaEste(Largo,C1,C2):- 
