@@ -22,7 +22,8 @@ comienzo 	:- 	write('Sopa cargada:'), nl,
 				print(SopaChar), nl,
 				sopa(Sopa),
 				matrizCuadrada(Sopa),
-				tab(20), nl,
+				tab(20), nl, write_ln(''),
+				imprimirMatriz(Sopa),
 				write('Ingrese la palabra a buscar: '), nl,
 				read(Palabra) ,
 				horizontalesEste(Palabra, Sopa, M), nl,
@@ -39,6 +40,19 @@ comienzo 	:- 	write('Sopa cargada:'), nl,
 %%  Funciones principales													 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%imprimirMatriz(+Lista)
+imprimirMatriz([]):-
+write_ln('').
+imprimirMatriz([X|XS]):-
+imprimirFila(X),
+imprimirMatriz(XS).
+
+%imprimirFila(+Lista)
+imprimirFila([]):-
+write_ln('').
+imprimirFila([X|XS]):-
+print(X),tab(1),
+imprimirFila(XS).
 
 %matrizCuadrada(+Lista)
 matrizCuadrada([]).
