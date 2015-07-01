@@ -51,12 +51,15 @@ matrizCuadrada([B|T]).
 
 encontrarEnSopa(Palabra,Resultados):- 
     sopaChar(Sopa),
+    length(Palabra,LargoPalabra),
     horizontalesEste(Palabra,Sopa, RHE),
+    procesarSalidaEste(5,RHE,RHEMOD), %5 = NRO matriz cuadrada
     horizontalesOeste(Palabra,Sopa, RHO),
+    procesarSalidaOeste(5,LargoPalabra,RHO,RHOMOD), %5 = NRO matriz cuadrada
     verticalesSur(Palabra,Sopa, RVS),
     verticalesNorte(Palabra,Sopa, RVN),
-    append([],RHE,R1),
-    append(R1,RHO,R2),
+    append([],RHEMOD,R1),
+    append(R1,RHOMOD,R2),
     append(R2,RVS,R3),
     append(R3,RVN,Resultados).
 
@@ -89,6 +92,24 @@ verticalesNorte(Palabra,Sopa,Resultado) :-
     encontrar(PalabraInversa,SopaInversa,Resultado,_,norte).
 
 
+procesarSalidaEste(_,[],[]).
+procesarSalidaEste(Largo,C1,C2):- 
+    append([[X,Y,Z]],D1,C1),
+    restar(Largo,Y,Resta),%Recalcula pos Y
+    append([[X,Resta,Z]],D2,C2),    
+    procesarSalidaEste(Largo,D1,D2).
+
+procesarSalidaOeste(_,_,[],[]).
+procesarSalidaOeste(LargoMatriz,LargoPalabra,C1,C2):- 
+    append([[X,Y,Z]],D1,C1),
+    restar(LargoMatriz,Y,Resta),%Recalcula pos Y    
+    %LargoPalabra is LargoP +1,
+    restar(LargoPalabra,1,LargoP),
+    sumar(X,LargoP,PosX),
+    append([[PosX,Resta,Z]],D2,C2),    
+    procesarSalidaOeste(LargoMatriz,LargoPalabra,D1,D2).
+
+
 %encontrar(Palabra,Sopa,Resultado,IndiceY,Direccion)
 encontrar(_,[],[],0, _).
 encontrar(X,[A|AS],C,IndiceY,Dir):- 
@@ -106,6 +127,8 @@ encontrar(X,[_|AS],C,IndiceY,Dir):-
 %%   Funciones auxiliares													 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+sumar(A, B, C):- C is A + B.
+restar(A, B, C):- C is A - B.
 
 % Invierte la lista que recibe en el primer nivel
 invertir([X],[X]).
@@ -142,7 +165,7 @@ sublista(L,[_|M]):-sublista(L,M).
 
 %16-Determina si la primer lista es sublista de la segunda*/
 sublistaIndex([],_,_):-!.
-sublistaIndex(L,[X|M],1):-prefijo(L,[X|M]).
+sublistaIndex(L,[X|M],0):-prefijo(L,[X|M]).
 sublistaIndex(L,[_|M],IndiceX):-sublistaIndex(L,M,Index),IndiceX is Index+1.
 
 % getVertical(+Sopa, -Columna, +Filas)
