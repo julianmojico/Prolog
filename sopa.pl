@@ -71,13 +71,13 @@ encontrarEnSopa(Palabra,Resultados):-
     sopaChar(Sopa),
     length(Palabra,LargoPalabra),
     horizontalesEste(Palabra,Sopa, RHE),
-    procesarSalidaEste(5,RHE,RHEMOD), %5 = NRO matriz cuadrada
+    procesarSalidaEste(4,RHE,RHEMOD), %5 = NRO matriz cuadrada
     horizontalesOeste(Palabra,Sopa, RHO),
-    procesarSalidaOeste(5,LargoPalabra,RHO,RHOMOD), %5 = NRO matriz cuadrada
+    procesarSalidaOeste(4,LargoPalabra,RHO,RHOMOD), %5 = NRO matriz cuadrada
     verticalesSur(Palabra,Sopa, RVS),
-    procesarSalidaSur(5,RVS,RVSMOD),
+    procesarSalidaSur(4,RVS,RVSMOD),
     verticalesNorte(Palabra,Sopa, RVN),
-    procesarSalidaNorte(5,LargoPalabra,RVN,RVNMOD),
+    procesarSalidaNorte(4,LargoPalabra,RVN,RVNMOD),
     append([],RHEMOD,R1),
     append(R1,RHOMOD,R2),
     append(R2,RVSMOD,R3),
