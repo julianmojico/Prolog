@@ -1,26 +1,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%   Pueden probar las funciones principales con estos predicados	     %%
-%% 	encontrarEnSopa([r,j,z],A).
+%%   Explicacion de programa                                      		     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%El programa principal se inicia ejecuntando  main().
+%Al ejecutar el programa principal se asigna la sopa invocando al predicado sopa(SOPA), la cual esta fija en este documento, y se muestra por pantalla.
+%Luego se solicita el ingreso por consola de la palabra a buscar y una vez ingresada se procede a buscarla por la matriz.
+
+%Para la busqueda se decidio separar la busqueda en 4 direcciones/sentidos (norte, sur, este, oeste).
+%Los resultados de cada una de estas busquedas tienen esl siguiente formato [ [Coordena eje X | coordenada eje Y, direccion/sentido] |XSS]
+%Es una lista de listas, para simplificar puede verse como una lista de ternas (X,Y,Direccion).
+%El resultado que se muestra por pantalla es la concatenacion de busca la palabra en los 4 sentidos, ya que la misma palabra puede figurar en mas de una direccion/sentido.
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%   MAIN PROGRAM                                       		     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cargarSopa	:-	write('Escribe el nombre de la Sopa de Letras (extemción pl): '), nl,
-				read(Archivo),
-				consult(Archivo),
-				comienzo .
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%  Cargar Sopa                                                              %%        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sopa(Sopa) :- Sopa = [["h","f","g","h"],["o","b","c","d"],["l","j","k","l"],["a","n","o","p"]].
-sopaChar(SopaChar):- SopaChar = [[h,f,g,h],
-				 [o,b,c,d],
-				 [l,j,k,l],
-				 [a,n,o,p]].
-cargarAlfabeto :-consult('alfabeto.pl') .
-
-
-comienzo 	:- 	write('Sopa cargada:'), nl,
+%%% rutina principal:
+%%% Genera la sopa y verifica que esta sea una matriz cuadrada.
+%%% Imprime por pantalla la sopa y solicita el ingreso por pantalla de la cadena a buscar.
+%%% Busca la cadena dentro de la sopa en las direcciones/sentidos solicitados y devuelve una lista con los Resultados o una lista vacia en caso de no encontrar la palabra.
+main 	:- 	write('Sopa cargada:'), nl,
 				tab(20),
 				sopaChar(SopaChar),
 				print(SopaChar), nl,
@@ -33,28 +34,37 @@ comienzo 	:- 	write('Sopa cargada:'), nl,
 				string_to_list_of_characters(Palabra, Palabraenlista),
 				encontrarEnSopa(Palabraenlista,Resultados),
 				print(Resultados).
-	
+
+sopa(Sopa) :- Sopa = [["h","f","g","h"],["o","b","c","d"],["l","j","k","l"],["a","n","o","p"]].
+sopaChar(SopaChar):- SopaChar = [[h,f,g,h],
+				 [o,b,c,d],
+				 [l,j,k,l],
+				 [a,n,o,p]].
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Funciones principales													 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%imprimirMatriz(+Lista)
+%%% funcion que grafica la matriz por pantalla
+%%% imprimirMatriz(+Lista) 
 imprimirMatriz([]):-
 write_ln('').
 imprimirMatriz([X|XS]):-
 imprimirFila(X),
 imprimirMatriz(XS).
 
-%imprimirFila(+Lista)
+%%% funcion auxiliar que grafica una fila por pantalla
+%%%	imprimirFila(+Lista) 
 imprimirFila([]):-
 write_ln('').
 imprimirFila([X|XS]):-
 print(X),tab(1),
 imprimirFila(XS).
 
-%matrizCuadrada(+Lista)
+%%% funcion que verifica que la matriz sopa sea cuadrada, es decir sea NxN
+%%% matrizCuadrada(+Lista)
 matrizCuadrada([]).
 matrizCuadrada([_|[]]).
 matrizCuadrada([A,B|T]):-
@@ -63,6 +73,17 @@ length(B,LENGTH2),
 LENGTH1==LENGTH2,
 matrizCuadrada([B|T]).
 
+
+%%% La busque de la palabra se divide en 4 funciones cada una de el busca en una direccion/sentido:
+%%% horizontalesEste busca la palabra en direccion horizontal, sentido este
+%%% horizontalesOeste busca la palabra en direccion horizontal, sentido oeste
+%%% verticalesSur busca la palabra en direccion vertical, sentido sur
+%%% verticalesNorte busca la palabra en direccion vertical, sentido norte
+%%%	Estas 4 funciones reciben la sopa y la palabra a buscar y el resultado de la busqueda esta en el tercer parametro, 
+%%% el resultado es una lista de listas que podria verse como una lista de ternas donde cada terna tiene la siguiente estructura
+%%% (Coordenada eje X, coordenada eje Y, Direccion/Sentido en el que se busco) 
+%%% El resultado de la busque da esta dado por la concatenacion de los resultados de las 4 funciones.
+%%% encontrarEnSopa(Palabra, Lista con resultados )
 encontrarEnSopa(Palabra,Resultados):- 
     sopaChar(Sopa),
     length(Palabra,LargoPalabra),
@@ -78,6 +99,7 @@ encontrarEnSopa(Palabra,Resultados):-
     append(R1,RHOMOD,R2),
     append(R2,RVSMOD,R3),
     append(R3,RVNMOD,Resultados).
+
 
 %horizontalesEste(+lpalabra,+Sopa,subconjuto de sopa que contiene "palabra")
 % Direccion Horizontal
@@ -107,6 +129,12 @@ verticalesNorte(Palabra,Sopa,Resultado) :-
     getVerticales(Sopa,SopaInversa),
     encontrar(PalabraInversa,SopaInversa,Resultado,_,norte).
 
+
+%%% recorre la lista de resultados y recomputa las coordenadas:
+%%% procesarSalidaNorte(Largo de matriz, largo de palabra a buscar, resultado de buscar en sentido norte, resultado recorregido)
+%%% las coordenadas deben corregirse ya que para buscar en sentido norte se invirtio la matriz sopa y la palabra a buscar.
+%%% NuevoY = ViejoX + (largoPalabra -1) 
+%%% NuevoX = largoMatriz - ViejoY
 procesarSalidaNorte(_,_,[],[]).
 procesarSalidaNorte(LargoMatriz,LargoPalabra,C1,C2):- 
     append([[X,Y,Z]],D1,C1),   
@@ -117,8 +145,11 @@ procesarSalidaNorte(LargoMatriz,LargoPalabra,C1,C2):-
     procesarSalidaNorte(LargoMatriz,LargoPalabra,D1,D2).
 
 
-%Invierte X por Y
-%El nuevo X es Largo matriz - Xanterior
+%%% recorre la lista de resultados y recomputa las coordenadas:
+%%% procesarSalidaSur(Largo de matriz, largo de palabra a buscar, resultado de buscar en sentido sur, resultado recorregido)
+%%% las coordenadas deben corregirse ya que para buscar en sentido sur se invirtio la matriz sopa
+%%% NuevoY = ViejoX 
+%%% NuevoX = largoMatriz - ViejoY
 procesarSalidaSur(_,[],[]).
 procesarSalidaSur(LargoMatriz,C1,C2):- 
     append([[X,Y,Z]],D1,C1),
@@ -126,24 +157,37 @@ procesarSalidaSur(LargoMatriz,C1,C2):-
     append([[Resta1,X,Z]],D2,C2),    
     procesarSalidaSur(LargoMatriz,D1,D2).
 
+%%% recorre la lista de resultados y recomputa las coordenadas:
+%%% procesarSalidaEste(Largo de matriz, largo de palabra a buscar, resultado de buscar en sentido este, resultado recorregido)
+%%% las coordenadas deben corregirse
+%%% NuevoY = LargoPalabra - ViejoY
+%%% NuevoX = ViejoX
 procesarSalidaEste(_,[],[]).
 procesarSalidaEste(Largo,C1,C2):- 
     append([[X,Y,Z]],D1,C1),
-    restar(Largo,Y,Resta),%Recalcula pos Y
+    restar(Largo,Y,Resta),
     append([[X,Resta,Z]],D2,C2),    
     procesarSalidaEste(Largo,D1,D2).
 
+
+%%% recorre la lista de resultados y recomputa las coordenadas:
+%%% procesarSalidaOeste(Largo de matriz, largo de palabra a buscar, resultado de buscar en sentido oeste, resultado recorregido)
+%%% las coordenadas deben corregirse ya que para buscar en sentido oeste se invirtio la palabra a buscar
+%%% NuevoY = LargoMatriz - ViejoY
+%%% NuevoX = (LargoPalabra -1) + ViejoX
 procesarSalidaOeste(_,_,[],[]).
 procesarSalidaOeste(LargoMatriz,LargoPalabra,C1,C2):- 
     append([[X,Y,Z]],D1,C1),
-    restar(LargoMatriz,Y,Resta),%Recalcula pos Y    
-    %LargoPalabra is LargoP +1,
+    restar(LargoMatriz,Y,Resta), 
     restar(LargoPalabra,1,LargoP),
     sumar(X,LargoP,PosX),
     append([[PosX,Resta,Z]],D2,C2),    
     procesarSalidaOeste(LargoMatriz,LargoPalabra,D1,D2).
 
 
+%%% Econtrar es un metodo generico que intera una matriz (vease como una lista de filas) donde recorre fila por fila de izquierda a derecha.
+%%% Busca dentro de la fila la aparicion de la palabra solicitada y en caso de encontrarla lo agrega a la lista de resultados con el formato 
+%%% previamente mencionado (CoordenadX, CoordendaY, sentido)
 %encontrar(Palabra,Sopa,Resultado,IndiceY,Direccion)
 encontrar(_,[],[],0, _).
 encontrar(X,[A|AS],C,IndiceY,Dir):- 
@@ -158,7 +202,7 @@ encontrar(X,[_|AS],C,IndiceY,Dir):-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%   Funciones auxiliares													 %%
+%%   Predicados auxiliares													 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string_to_list_of_characters(String, Characters) :-
